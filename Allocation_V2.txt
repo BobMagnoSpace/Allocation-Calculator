@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Allocation Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Project Allocation Calculator</h2>
+        <label for="totalProjects">Total Projects:</label>
+        <input type="number" id="totalProjects" placeholder="Enter total projects">
+
+        <label for="codyCapacity">Cody's Team Capacity:</label>
+        <input type="number" id="codyCapacity" placeholder="Enter capacity">
+
+        <label for="georgeCapacity">George's Team Capacity:</label>
+        <input type="number" id="georgeCapacity" placeholder="Enter capacity">
+
+        <label for="jasonCapacity">Jason's Team Capacity:</label>
+        <input type="number" id="jasonCapacity" placeholder="Enter capacity">
+
+        <label for="robertoCapacity">Roberto's Team Capacity:</label>
+        <input type="number" id="robertoCapacity" placeholder="Enter capacity">
+
+        <button onclick="calculateAllocation()">Calculate</button>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        function calculateAllocation() {
+            const totalProjects = parseInt(document.getElementById("totalProjects").value);
+            const capacities = [
+                parseFloat(document.getElementById("codyCapacity").value),
+                parseFloat(document.getElementById("georgeCapacity").value),
+                parseFloat(document.getElementById("jasonCapacity").value),
+                parseFloat(document.getElementById("robertoCapacity").value)
+            ];
+
+            if (isNaN(totalProjects) || capacities.some(isNaN)) {
+                document.getElementById("results").innerText = "Please enter valid numbers.";
+                return;
+            }
+
+            const totalCapacity = capacities.reduce((sum, cap) => sum + cap, 0);
+            let allocations = capacities.map(cap => Math.round((cap / totalCapacity) * totalProjects));
+
+            // Adjust if necessary
+            while (allocations.reduce((sum, alloc) => sum + alloc, 0) !== totalProjects) {
+                const difference = totalProjects - allocations.reduce((sum, alloc) => sum + alloc, 0);
+                if (difference > 0) {
+                    allocations[allocations.indexOf(Math.min(...allocations))] += 1;
+                } else {
+                    allocations[allocations.indexOf(Math.max(...allocations))] -= 1;
+                }
+            }
+
+            // Display results
+            document.getElementById("results").innerHTML = `
+                Cody: ${allocations[0]} projects<br>
+                George: ${allocations[1]} projects<br>
+                Jason: ${allocations[2]} projects<br>
+                Roberto: ${allocations[3]} projects
+            `;
+        }
+    </script>
+</body>
+</html>
